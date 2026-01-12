@@ -1,0 +1,12 @@
+Copyright (c) 2025 Hardik Gupta
+
+This project is open source for learning and personal use only.
+
+Permission is granted to view, use, modify, and share this code
+for non commercial purposes.
+
+Commercial use, selling, sublicensing, or including this project
+in any paid product or service is strictly prohibited without
+explicit written permission from the author.
+
+This software is provided "as is" without warranty of any kind.

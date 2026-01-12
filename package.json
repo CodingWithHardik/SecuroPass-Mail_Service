@@ -1,0 +1,30 @@
+{
+  "name": "securopass-mail_server",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "email:dev": "email dev --dir templates/mail"
+  },
+  "prisma": {
+    "schema": "./prisma/models"
+  },
+  "devDependencies": {
+    "@react-email/preview-server": "5.2.1",
+    "@types/bun": "latest",
+    "prisma": "^7.2.0",
+    "react-email": "5.2.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@prisma/adapter-libsql": "^7.2.0",
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "@react-email/components": "1.0.4",
+    "dotenv": "^17.2.3",
+    "ioredis": "^5.9.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  }
+}

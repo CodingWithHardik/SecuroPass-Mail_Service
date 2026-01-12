@@ -1,0 +1,22 @@
+model email {
+    id String @id @default(cuid())
+    templateid String @unique
+    templateLocation String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    requirements Requirement[]
+}
+
+model Requirement {
+    id String @id @default(cuid())
+    name String
+    type Type
+    emailId String
+    email email @relation(fields: [emailId], references: [id])
+}
+
+enum Type {
+    STRING
+    NUMBER
+    BOOLEAN
+}
