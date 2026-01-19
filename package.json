@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "email:dev": "email dev --dir templates/mail"
+    "email:securopass": "email dev --dir templates/securopass/mail"
   },
   "prisma": {
     "schema": "./prisma/models"

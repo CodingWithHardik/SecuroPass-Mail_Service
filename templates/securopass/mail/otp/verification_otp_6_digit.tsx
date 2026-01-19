@@ -1,6 +1,7 @@
 import { Row, Html, Head, Tailwind, Img, Container, Column, Text, Button } from "@react-email/components";
 
-export default function OTP_template() {
+export default function template({ otp, link }: { otp: number; link: string }) {
+    const otpString = otp.toString().split("");
     return (
         <Html>
             <Head>
@@ -23,16 +24,16 @@ export default function OTP_template() {
                         <h1 className="text-4xl text-center">OTP Verification</h1>
                         <p className="font-family: Arial, sans-serif; text-base text-gray-500">Thank you for choosing SecuroPass. Use the following OTP to complete the procedure to verify your email address. OTP is Valid for <span className="font-bold">5 minutes</span>. Do not share this code with others, including SecuroPass employees.</p>
                         <Text className="font-bold text-2xl mt-8">
-                            <span className="bg-gray-100 px-4 py-2 rounded-md">1</span>
-                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-4">2</span>
-                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-4">3</span>
-                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-8">4</span>
-                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-4">5</span>
-                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-4">6</span>
+                            <span className="bg-gray-100 px-4 py-2 rounded-md">{otpString[0]}</span>
+                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-4">{otpString[1]}</span>
+                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-4">{otpString[2]}</span>
+                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-8">{otpString[3]}</span>
+                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-4">{otpString[4]}</span>
+                            <span className="bg-gray-100 px-4 py-2 rounded-md ml-4">{otpString[5]}</span>
                         </Text>
                         <Button
                             className="rounded-full py-4 px-8 text-center text-gray-900 mt-8 font-bold bg-black text-white"
-                            href="https://react.email"
+                            href={link}
                         >
                             Verify
                         </Button>

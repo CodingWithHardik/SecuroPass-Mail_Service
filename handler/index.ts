@@ -1,15 +1,9 @@
 import { readdirSync } from "fs";
 import path from "path";
-import { redis, subscribe } from "..";
+import { subscribe } from "..";
 import { prisma } from "../lib/prisma";
 import template from "../migrations/template";
-
-const eventPath = path.join(__dirname, "../events");
-readdirSync(eventPath).forEach(async (file) => {
-    if (file.endsWith(".ts") || file.endsWith(".js")) {
-        await import(path.join(eventPath, file));
-    }
-});
+import { redis } from "..";
 
 subscribe.psubscribe("mailer:*", (err, count) => {
   if (err) {
@@ -19,7 +13,21 @@ subscribe.psubscribe("mailer:*", (err, count) => {
   }
 });
 
-const rdbTemplates = await redis.keys("template:*");
-const dbTemplate = await prisma.email.findMany()
-const template_migrate = await template(rdbTemplates, dbTemplate);
+const rdbTemplates = await redis.duplicate().keys("template:*");
+const dbTemplate = await prisma.email.findMany();
+const dbRequirements = await prisma.requirement.findMany();
+const template_migrate = await template(
+  rdbTemplates,
+  dbTemplate,
+  dbRequirements,
+);
 if (template_migrate) console.log("[MIGRATION] Template migration completed.");
+
+const eventPath = path.join(__dirname, "../events");
+console.log("Loading event handlers from:", eventPath);
+readdirSync(eventPath).forEach(async (file) => {
+  if (file.endsWith(".ts") || file.endsWith(".js")) {
+    console.log(path.join(eventPath, file));
+    await import(path.join(eventPath, file));
+  }
+});

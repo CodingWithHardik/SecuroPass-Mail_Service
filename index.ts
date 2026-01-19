@@ -6,24 +6,22 @@ export const redis = new Redis({
   port: Number(process.env.REDIS_PORT),
   username: process.env.REDIS_USERNAME,
   password: process.env.REDIS_PASSWORD,
-  enableReadyCheck: false,
+  enableReadyCheck: true,
   lazyConnect: false,
 });
 
-export const subscribe = new Redis({
-  host: process.env.REDIS_HOST,
-  port: Number(process.env.REDIS_PORT),
-  username: process.env.REDIS_USERNAME,
-  password: process.env.REDIS_PASSWORD,
-  enableReadyCheck: false,
-  lazyConnect: false,
-});
+export const subscribe = redis.duplicate();
 
-redis.on("connect", () => {
+redis.on("ready", () => {
   console.log("Redis client connected");
 });
-subscribe.on("connect", () => {
-  console.log("Subscribe client connected");
+
+redis.on("error", (err) => {
+  console.error("Redis client error:", err);
 });
+
+redis.on("reconnecting", () => {
+  console.log("Redis client reconnecting");
+})
 
 await import("./handler/index");
