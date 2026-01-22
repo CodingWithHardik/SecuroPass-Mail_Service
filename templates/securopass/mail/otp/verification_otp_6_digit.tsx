@@ -1,5 +1,5 @@
 import { Row, Html, Head, Tailwind, Img, Container, Column, Text, Button } from "@react-email/components";
-
+export const subject = "Your One-Time Password (OTP) for SecuroPass Verification";
 export default function template({ otp, link }: { otp: number; link: string }) {
     const otpString = otp.toString().split("");
     return (

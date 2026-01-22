@@ -4,6 +4,7 @@ import { subscribe } from "..";
 import { prisma } from "../lib/prisma";
 import template from "../migrations/template";
 import { redis } from "..";
+import { mail_transporter } from "../lib/nodemailer";
 
 subscribe.psubscribe("mailer:*", (err, count) => {
   if (err) {
@@ -24,10 +25,14 @@ const template_migrate = await template(
 if (template_migrate) console.log("[MIGRATION] Template migration completed.");
 
 const eventPath = path.join(__dirname, "../events");
-console.log("Loading event handlers from:", eventPath);
 readdirSync(eventPath).forEach(async (file) => {
-  if (file.endsWith(".ts") || file.endsWith(".js")) {
-    console.log(path.join(eventPath, file));
+  if (file.endsWith(".ts") || file.endsWith(".js") || file.endsWith(".jsx") || file.endsWith(".tsx")) {
     await import(path.join(eventPath, file));
   }
+});
+
+mail_transporter.verify().then(() => {
+  console.log("Mail transporter is ready to send emails");
+}).catch((err) => {
+  console.error("Mail transporter verification failed:", err);
 });

@@ -21,8 +21,6 @@ subscribe.on("pmessage", async (pattern, channel, message) => {
     template: templatedata.templateLocation,
     data: msgdata,
   }));
-
-  console.log(JSON.parse(templateget!));
 });
 
 subscribe.on("error", (err) => {
