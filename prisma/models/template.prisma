@@ -1,4 +1,4 @@
-model email {
+model template {
     id String @id @default(cuid())
     templateid String @unique
     templateLocation String
@@ -11,8 +11,8 @@ model Requirement {
     id String @id @default(cuid())
     name String
     type Type
-    emailId String
-    email email @relation(fields: [emailId], references: [id])
+    templateId String
+    template template @relation(fields: [templateId], references: [id])
 }
 
 enum Type {

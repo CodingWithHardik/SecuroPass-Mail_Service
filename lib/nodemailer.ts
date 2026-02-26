@@ -9,3 +9,10 @@ export const mail_transporter = createTransport({
         pass: process.env.MAIL_PASS,
     },
 })
+
+mail_transporter.verify().then(() => {
+    console.log("Mail transporter is ready to send messages");
+}).catch((err) => {
+    console.error("Error with mail transporter:", err);
+});
+

@@ -1,0 +1,13 @@
+model account {
+    id String @id @default(cuid())
+    host String
+    port Int
+    secure Boolean
+    user String
+    pass String
+    email String
+    emailName String
+    requirements String[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

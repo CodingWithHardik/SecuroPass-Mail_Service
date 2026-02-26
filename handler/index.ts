@@ -15,7 +15,7 @@ subscribe.psubscribe("mailer:*", (err, count) => {
 });
 
 const rdbTemplates = await redis.duplicate().keys("template:*");
-const dbTemplate = await prisma.email.findMany();
+const dbTemplate = await prisma.template.findMany();
 const dbRequirements = await prisma.requirement.findMany();
 const template_migrate = await template(
   rdbTemplates,

@@ -7,8 +7,8 @@ export default async (
 ) => {
   if (!rdbTemplates?.length) {
     for (const template of dbTemplate) {
-      const dbRequirementsForTemplate = dbRequirements.find(
-        (req) => req.emailId === template.id,
+      const dbRequirementsForTemplate = dbRequirements.filter(
+        (req) => req.templateId === template.id,
       );
       template.requirements = dbRequirementsForTemplate;
       await redis.set(
@@ -20,7 +20,7 @@ export default async (
     for (const template of dbTemplate) {
       const exists = await redis.exists(`template:${template.templateid}`);
       const dbRequirementsForTemplate = dbRequirements.filter(
-        (req) => req.emailId === template.id,
+        (req) => req.templateId === template.id,
       );
       template.requirements = dbRequirementsForTemplate;
       if (!exists) {
@@ -46,7 +46,7 @@ export default async (
     }
     for (const rdbTemplateKey of rdbTemplates) {
       const templateId = rdbTemplateKey.split(":")[1];
-      const existsInDb = dbTemplate.find((t) => t.templateid === templateId);
+      const existsInDb = dbTemplate.filter((t) => t.templateid === templateId);
       if (!existsInDb) {
         await redis.del(rdbTemplateKey);
       }
