@@ -1,4 +1,4 @@
-import { redis } from "..";
+import { redis_del, redis_exists, redis_get, redis_set } from "../utils/redis";
 
 export default async (
   rdbTemplates: Array<any>,
@@ -11,35 +11,32 @@ export default async (
         (req) => req.templateId === template.id,
       );
       template.requirements = dbRequirementsForTemplate;
-      await redis.set(
+      await redis_set(
         `template:${template.templateid}`,
         JSON.stringify(template),
       );
     }
   } else {
     for (const template of dbTemplate) {
-      const exists = await redis.exists(`template:${template.templateid}`);
+      const exists = await redis_exists(`template:${template.templateid}`);
       const dbRequirementsForTemplate = dbRequirements.filter(
         (req) => req.templateId === template.id,
       );
       template.requirements = dbRequirementsForTemplate;
       if (!exists) {
-        await redis.set(
+        await redis_set(
           `template:${template.templateid}`,
           JSON.stringify(template),
         );
       } else {
-        const rdbTemplate = await redis.get(`template:${template.templateid}`);
+        const rdbTemplate = await redis_get(`template:${template.templateid}`);
         if (rdbTemplate) {
           const parsedRdbTemplate = JSON.parse(rdbTemplate);
           if (
             new Date(parsedRdbTemplate.updatedAt).getTime() !==
             new Date(template.updatedAt).getTime()
           ) {
-            await redis.set(
-              `template:${template.templateid}`,
-              JSON.stringify(template),
-            );
+            await redis_set(`template:${template.templateid}`, JSON.stringify(template));
           }
         }
       }
@@ -48,7 +45,7 @@ export default async (
       const templateId = rdbTemplateKey.split(":")[1];
       const existsInDb = dbTemplate.filter((t) => t.templateid === templateId);
       if (!existsInDb) {
-        await redis.del(rdbTemplateKey);
+        await redis_del(rdbTemplateKey)
       }
     }
   }

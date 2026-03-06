@@ -1,9 +1,10 @@
 import "dotenv/config";
-import { redis } from "..";
 import { mail_transporter } from "../lib/nodemailer";
 import { render } from "@react-email/components";
 import path from "path";
 import fs from "fs";
+import { spawnShard } from "../clusters/magaer";
+import { redis_brpop, redis_llen, redis_zadd, redis_zcard, redis_zrange, redis_zremrangebyscore } from "../utils/redis";
 
 const EMAIL_LIMIT_TYPE = process.env.EMAIL_LIMIT_TYPE;
 const EMAIL_LIMIT = Number(process.env.EMAIL_LIMIT || 0);
@@ -15,11 +16,11 @@ if (EMAIL_LIMIT_TYPE === "DAY") WINDOW_SECOND = 86400;
 async function email_queue() {
   const now = Date.now();
   const expiresIn = now + WINDOW_SECOND * 1000;
-  await redis.zremrangebyscore("limit:count", 0, now);
-  let limit = Number((await redis.zcard("limit:count")) || "0");
+  await redis_zremrangebyscore("limit:count", 0, now);
+  let limit = Number((await redis_zcard("limit:count")) || "0");
   if (limit === null) return email_queue();
   if (limit >= EMAIL_LIMIT) {
-    const list = await redis.zrange("limit:count", 0, 0, "WITHSCORES");
+    const list = await redis_zrange("limit:count", 0, 0, true);
     if (list.length > 1) {
       const oldest = Number(list[1]);
       const waitTime = Math.max(oldest - now, 50);
@@ -29,9 +30,9 @@ async function email_queue() {
     }
     return email_queue();
   }
-  const popdata = await redis.brpop("email_queue", 0);
+  const popdata = await redis_brpop("email_queue", 0);
   const emailData = JSON.parse(popdata![1]);
-  await redis.zadd("limit:count", expiresIn, now.toString());
+  await redis_zadd("limit:count", expiresIn, now.toString());
   const templatePathTs = path.join(
     __dirname,
     "../templates",
@@ -67,7 +68,7 @@ async function email_queue() {
     }
   });
   console.log("Envelope used:", info.envelope);
-  const lengthData = await redis.llen("email_queue");
+  const lengthData = await redis_llen("email_queue");
   if (
     EMAIL_LIMIT_TYPE === "MINUTE" &&
     lengthData > 0 &&

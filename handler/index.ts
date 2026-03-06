@@ -3,8 +3,8 @@ import path from "path";
 import { subscribe } from "..";
 import { prisma } from "../lib/prisma";
 import template from "../migrations/template";
-import { redis } from "..";
 import { mail_transporter } from "../lib/nodemailer";
+import { redis_keys } from "../utils/redis";
 
 subscribe.psubscribe("mailer:*", (err, count) => {
   if (err) {
@@ -14,7 +14,7 @@ subscribe.psubscribe("mailer:*", (err, count) => {
   }
 });
 
-const rdbTemplates = await redis.duplicate().keys("template:*");
+const rdbTemplates = await redis_keys("template:*");
 const dbTemplate = await prisma.template.findMany();
 const dbRequirements = await prisma.requirement.findMany();
 const template_migrate = await template(
